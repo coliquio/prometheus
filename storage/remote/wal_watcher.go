@@ -318,6 +318,7 @@ func (w *WALWatcher) watch(segmentNum int, tail bool) error {
 		}
 	}
 
+	gcSem := make(chan struct{}, 1)
 	for {
 		select {
 		case <-w.quit:
@@ -326,9 +327,17 @@ func (w *WALWatcher) watch(segmentNum int, tail bool) error {
 		case <-checkpointTicker.C:
 			// Periodically check if there is a new checkpoint so we can garbage
 			// collect labels. As this is considered an optimisation, we ignore
-			// errors during checkpoint processing.
-			if err := w.garbageCollectSeries(segmentNum); err != nil {
-				level.Warn(w.logger).Log("msg", "error process checkpoint", "err", err)
+			// errors during checkpoint processing, and do the process asynchronously.
+			select {
+			case gcSem <- struct{}{}:
+				go func() {
+					if err := w.garbageCollectSeries(segmentNum); err != nil {
+						level.Warn(w.logger).Log("msg", "error process checkpoint", "err", err)
+					}
+					<-gcSem
+				}()
+			default:
+				// Currently doing a garbage collect, try again later.
 			}
 
 		case <-segmentTicker.C:
