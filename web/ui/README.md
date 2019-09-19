@@ -8,6 +8,7 @@ To make this work, add `-tags dev` to the `flags` entry in `.promu.yml`, and the
 
 This will serve all files from your local filesystem.
 This is for development purposes only.
+Prometheus needs to be started in `web/ui/` directory.
 
 After making changes to any file, run `make assets` before committing to update
 the generated inline version of the file.

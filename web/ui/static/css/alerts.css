@@ -6,17 +6,17 @@
   display: none;
 }
 
-div.show-annotations {
+div.show-annotations, div.show-active {
   font-size: 0.8em;
   padding-top: 1em;
   padding-bottom: 1em;
 }
 
-div.show-annotations:hover {
+div.show-annotations:hover, div.show-active:hover {
   cursor: pointer;
 }
 
-div.show-annotations button {
+div.show-annotations button, div.show-active button {
   background-color: transparent;
   border: none;
   outline: none;
@@ -24,7 +24,7 @@ div.show-annotations button {
   color: inherit;
 }
 
-div.show-annotations.is-checked {
+div.show-annotations.is-checked, div.show-active.is-checked {
   color: #286090;
 }
 
